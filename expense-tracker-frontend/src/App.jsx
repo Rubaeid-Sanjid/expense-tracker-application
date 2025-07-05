@@ -1,4 +1,9 @@
+import { useEffect } from "react";
+import { useState } from "react";
+
 function App() {
+  const [expenses, setExpenses] = useState([]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -15,21 +20,30 @@ function App() {
     };
     console.log(expenseInfo);
 
-    fetch('', {
+    fetch("http://localhost:5000/expenses", {
       method: "POST",
       headers: {
-        'content-type': "application/json",
+        "content-type": "application/json",
       },
-      body: JSON.stringify()
-    });
-
+      body: JSON.stringify(expenseInfo),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
   };
+
+  useEffect(() => {
+    fetch("http://localhost:5000/expenses")
+      .then((res) => res.json())
+      .then((data) => setExpenses(data));
+  }, [expenses]);
+
   return (
     <>
-      <h1>Add New Expense</h1>
       <div>
+        <h1 className="text-3xl lg:text-4xl font-bold">Add New Expense</h1>
         <form onSubmit={handleSubmit}>
-         
           <div class="sm:col-span-4">
             <label
               for="title"
@@ -137,7 +151,10 @@ function App() {
             />
           </div>
         </form>
+
       </div>
+      {/* Display */}
+        <div>{expenses.length}</div>
     </>
   );
 }

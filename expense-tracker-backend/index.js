@@ -25,6 +25,10 @@ async function run() {
 
     const expenseCollection = client.db('expenseTracker').collection('expenses');
 
+    app.get('/expenses', async(req, res)=>{
+        const result = await expenseCollection.find().toArray();
+        res.send(result);
+    })
     app.post('/expenses', async(req, res)=>{
         const expenseInfo = req.body;
         const result = await expenseCollection.insertOne(expenseInfo);
