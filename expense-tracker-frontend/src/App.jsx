@@ -3,12 +3,17 @@ import { useState } from "react";
 
 function App() {
   const [expenses, setExpenses] = useState([]);
+  const [category, setCategory] = useState("");
   
-  const total = expenses
+  const filteredItems = category ? expenses.filter(expense => expense.category === category) : expenses;
+  
+  const total = filteredItems
     .filter((expense) => expense.amount)
     .reduce((prev, curr) => prev + parseFloat(curr.amount), 0);
 
-  const highestAmount = Math.max(...expenses.map((expense) => parseFloat(expense.amount)));
+  const highestAmount = Math.max(
+    ...expenses.map((expense) => parseFloat(expense.amount))
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,7 +29,6 @@ function App() {
       date,
       category,
     };
-    console.log(expenseInfo);
 
     fetch("http://localhost:5000/expenses", {
       method: "POST",
@@ -44,6 +48,12 @@ function App() {
       .then((res) => res.json())
       .then((data) => setExpenses(data));
   }, [expenses]);
+
+  const handleFilter = (e) => {
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+  };
+
 
   return (
     <section className="px-12 flex flex-col gap-12 my-10">
@@ -158,7 +168,6 @@ function App() {
               value={"submit"}
               name="submit"
               // disabled={!expenseInfo}
-              // disabled
               className="border bg-blue-500 text-white p-2 rounded-lg"
             />
           </div>
@@ -170,6 +179,25 @@ function App() {
         <h1 className="text-2xl lg:text-3xl font-bold mb-5">
           All Expense Details
         </h1>
+
+        {/* Filter Form */}
+        <form>
+          <h3>Filter by Category: </h3>
+          <select
+            id="category"
+            name="category"
+            required
+            onChange={handleFilter}
+            className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+          >
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Bills">Bills</option>
+            <option value="Others">Others</option>
+          </select>
+        </form>
+
         <table className="w-full text-center">
           <tr className="border p-4">
             <th>Title</th>
@@ -178,7 +206,7 @@ function App() {
             <th>Category</th>
             <th>Action</th>
           </tr>
-          {expenses.map((expense) => (
+          {filteredItems.map((expense) => (
             <tr className=" border-b">
               <td>{expense.title}</td>
               <td>{expense.amount}</td>
@@ -195,13 +223,13 @@ function App() {
       </div>
 
       {/* Expense Summery */}
-      <div>
-        <div>
+      <div className="flex flex-col lg:flex gap-6">
+        <div className="border px-6 py-3">
           <h3>Total Expenses: </h3>
           <h3>{total}</h3>
         </div>
 
-        <div>
+        <div className="border px-6 py-3">
           <h3>Highest Expenses: </h3>
           <h3>{highestAmount}</h3>
         </div>
