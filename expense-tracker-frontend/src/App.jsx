@@ -3,6 +3,12 @@ import { useState } from "react";
 
 function App() {
   const [expenses, setExpenses] = useState([]);
+  
+  const total = expenses
+    .filter((expense) => expense.amount)
+    .reduce((prev, curr) => prev + parseFloat(curr.amount), 0);
+
+  const highestAmount = Math.max(...expenses.map((expense) => parseFloat(expense.amount)));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -40,14 +46,17 @@ function App() {
   }, [expenses]);
 
   return (
-    <>
+    <section className="px-12 flex flex-col gap-12 my-10">
+      <h1 className="text-3xl lg:text-4xl font-bold mb-6 text-center">
+        Welcome To Expense Tracker
+      </h1>
       <div>
-        <h1 className="text-3xl lg:text-4xl font-bold">Add New Expense</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold mb-5">Add New Expense</h1>
         <form onSubmit={handleSubmit}>
-          <div class="sm:col-span-4">
+          <div className="sm:col-span-4">
             <label
               for="title"
-              class="block text-sm/6 font-medium text-gray-900"
+              className="block text-sm/6 font-medium text-gray-900"
             >
               Expense Title
             </label>
@@ -57,7 +66,7 @@ function App() {
                   type="text"
                   name="title"
                   id="title"
-                  class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                  className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                   placeholder=""
                   required
                 />
@@ -65,10 +74,10 @@ function App() {
             </div>
           </div>
 
-          <div class="sm:col-span-4">
+          <div className="sm:col-span-4">
             <label
               for="amount"
-              class="block text-sm/6 font-medium text-gray-900"
+              className="block text-sm/6 font-medium text-gray-900"
             >
               Amount (TK)
             </label>
@@ -78,7 +87,7 @@ function App() {
                   type="number"
                   name="amount"
                   id="amount"
-                  class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                  className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                   placeholder=""
                   required
                 />
@@ -86,17 +95,20 @@ function App() {
             </div>
           </div>
 
-          <div class="sm:col-span-4">
-            <label for="date" class="block text-sm/6 font-medium text-gray-900">
+          <div className="sm:col-span-4">
+            <label
+              for="date"
+              className="block text-sm/6 font-medium text-gray-900"
+            >
               Date
             </label>
-            <div class="mt-2">
-              <div class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
+            <div className="mt-2">
+              <div className="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-600">
                 <input
                   type="date"
                   name="date"
                   id="date"
-                  class="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                  className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
                   placeholder=""
                   required
                 />
@@ -104,19 +116,19 @@ function App() {
             </div>
           </div>
 
-          <div class="sm:col-span-3">
+          <div className="sm:col-span-3">
             <label
               for="category"
-              class="block text-sm/6 font-medium text-gray-900"
+              className="block text-sm/6 font-medium text-gray-900"
             >
               Category
             </label>
-            <div class="mt-2 grid grid-cols-1">
+            <div className="mt-2 grid grid-cols-1">
               <select
                 id="category"
                 name="category"
                 required
-                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               >
                 <option value="Food">Food</option>
                 <option value="Travel">Travel</option>
@@ -125,7 +137,7 @@ function App() {
                 <option value="Others">Others</option>
               </select>
               <svg
-                class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
                 viewBox="0 0 16 16"
                 fill="currentColor"
                 aria-hidden="true"
@@ -151,11 +163,50 @@ function App() {
             />
           </div>
         </form>
-
       </div>
+
       {/* Display */}
-        <div>{expenses.length}</div>
-    </>
+      <div>
+        <h1 className="text-2xl lg:text-3xl font-bold mb-5">
+          All Expense Details
+        </h1>
+        <table className="w-full text-center">
+          <tr className="border p-4">
+            <th>Title</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Action</th>
+          </tr>
+          {expenses.map((expense) => (
+            <tr className=" border-b">
+              <td>{expense.title}</td>
+              <td>{expense.amount}</td>
+              <td>{expense.date}</td>
+              <td>{expense.category}</td>
+              <td>
+                <button className="rounded-lg text-white p-2 bg-blue-500">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </table>
+      </div>
+
+      {/* Expense Summery */}
+      <div>
+        <div>
+          <h3>Total Expenses: </h3>
+          <h3>{total}</h3>
+        </div>
+
+        <div>
+          <h3>Highest Expenses: </h3>
+          <h3>{highestAmount}</h3>
+        </div>
+      </div>
+    </section>
   );
 }
 
