@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const port = process.env.PORT || 5000;
@@ -32,6 +32,12 @@ async function run() {
     app.post('/expenses', async(req, res)=>{
         const expenseInfo = req.body;
         const result = await expenseCollection.insertOne(expenseInfo);
+        res.send(result);
+    })
+    app.delete('/expenses/:id', async(req, res)=>{
+      const id = req.params.id;
+      const filter = {_id : new ObjectId(id)}
+        const result = await expenseCollection.deleteOne(filter);
         res.send(result);
     })
 

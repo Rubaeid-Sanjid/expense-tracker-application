@@ -54,6 +54,15 @@ function App() {
     setCategory(selectedCategory);
   };
 
+  const handleDelete = (id)=>{
+    fetch(`http://localhost:5000/expenses/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }
 
   return (
     <section className="px-12 flex flex-col gap-12 my-10">
@@ -181,7 +190,7 @@ function App() {
         </h1>
 
         {/* Filter Form */}
-        <form>
+        <form className="mb-5">
           <h3>Filter by Category: </h3>
           <select
             id="category"
@@ -213,7 +222,7 @@ function App() {
               <td>{expense.date}</td>
               <td>{expense.category}</td>
               <td>
-                <button className="rounded-lg text-white p-2 bg-blue-500">
+                <button onClick={()=>handleDelete(expense._id)} className="rounded-lg text-white p-2 bg-blue-500">
                   Delete
                 </button>
               </td>
